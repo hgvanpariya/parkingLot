@@ -56,7 +56,7 @@ Vehicle type = CAR_20KV
 ```
 
 ## Error Code
-
+ERR01 : Parking is Full.
 ERR04 : Invalid Ticket ID.
 
 ## Limitations:

@@ -39,18 +39,22 @@ public class ParkingLot {
 		}
 	}
 
-	public Ticket assignParking(String licenseNumber, VehicleType vehicleType) throws ParkingFullException {
+	public synchronized Ticket assignParking(String licenseNumber, VehicleType vehicleType)
+			throws ParkingFullException {
+
+		if (licenseNumber == null || vehicleType == null) {
+			return null;
+		}
+
 		// Check if Parking is full
 		if (this.isFull(vehicleType)) {
 			throw new ParkingFullException();
 		}
-		synchronized (this) {
-			Vehicle vehicle = new Vehicle(licenseNumber, vehicleType);
-			// Get Parking slot number
-			Integer parkingSlotNumber = parkingSlotService.assignVehicleToSlot(vehicle);
-			parkingSlotService.incrementSpotCount(vehicle.getType());
-			return ticketService.createTicket(vehicle, parkingSlotNumber);
-		}
+		Vehicle vehicle = new Vehicle(licenseNumber, vehicleType);
+		// Get Parking slot number
+		Integer parkingSlotNumber = parkingSlotService.assignVehicleToSlot(vehicle);
+		parkingSlotService.incrementSpotCount(vehicle.getType());
+		return ticketService.createTicket(vehicle, parkingSlotNumber);
 	}
 
 	public synchronized double vehicleExit(String ticketID) throws ParkingFullException {

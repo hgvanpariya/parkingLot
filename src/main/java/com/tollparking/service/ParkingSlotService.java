@@ -19,7 +19,7 @@ public class ParkingSlotService {
 	private ParkingSlotRepository parkingSlotRepository;
 	private Properties properties;
 
-	public ParkingSlotService(Map<ParkingSlotType, Integer> allParkingSlotConfig) {
+	private ParkingSlotService(Map<ParkingSlotType, Integer> allParkingSlotConfig) {
 		parkingSlotRepository = new ParkingSlotRepository();
 		parkingSlotRepository.initializeRepository(allParkingSlotConfig);
 		properties = new Properties();
@@ -37,12 +37,19 @@ public class ParkingSlotService {
 		return parkingSlotService;
 	}
 
+	public static ParkingSlotService getInstance() {
+		if (parkingSlotService != null) {
+			return parkingSlotService;
+		}
+		return null;
+	}
+
 	/**
 	 * This method will find the fee parking slot for the vehicle.
 	 * 
 	 * @param vehicle
 	 * @return
-	 * @throws ParkingFullException 
+	 * @throws ParkingFullException
 	 */
 	public Integer findFreeSlotForVehicle(Vehicle vehicle) throws ParkingFullException {
 		Map<Integer, ParkingSlot> map = parkingSlotRepository.getAllSlots().get(convert(vehicle.getType()));
@@ -59,7 +66,7 @@ public class ParkingSlotService {
 	 * 
 	 * @param vehicle
 	 * @return
-	 * @throws ParkingFullException 
+	 * @throws ParkingFullException
 	 */
 	public Integer assignVehicleToSlot(Vehicle vehicle) throws ParkingFullException {
 		Integer findFreeSlotForVehicle = findFreeSlotForVehicle(vehicle);
@@ -112,7 +119,19 @@ public class ParkingSlotService {
 		return totalAllotedSlot >= totalAvailableSlots;
 	}
 
+	/**
+	 * This method is the converter from {@link VehicleType} to {@link ParkingSlotType}
+	 * @param vehicleType
+	 * @return
+	 */
 	public ParkingSlotType convert(VehicleType vehicleType) {
 		return ParkingSlotType.valueOf(properties.getProperty(vehicleType.toString()));
+	}
+	
+	/**
+	 * This method will clean the parking. It will be mainly used for test.
+	 */
+	public void cleanSpecificParkingType(ParkingSlotType parkingSlotType) {
+		parkingSlotRepository.getAllAllotedSlotCount().put(parkingSlotType,0);
 	}
 }
