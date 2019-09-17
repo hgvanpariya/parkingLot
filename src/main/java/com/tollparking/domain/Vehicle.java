@@ -14,10 +14,6 @@ public class Vehicle {
 		this.type = type;
 	}
 
-	public Vehicle(VehicleType type) {
-		this.type = type;
-	}
-
 	public String getLicenseNumber() {
 		return licenseNumber;
 	}
@@ -30,10 +26,4 @@ public class Vehicle {
 		return type;
 	}
 
-	@Override
-	public String toString() {
-		return "Vehicle [licenseNumber=" + licenseNumber + ", type=" + type + "]";
-	}
-
-	
 }

@@ -7,7 +7,7 @@ package com.tollparking.domain;
  */
 public class ParkingSlot {
 
-	private String number;
+	private int number;
 	private boolean free = true;
 	private Vehicle vehicle;
 	private ParkingSlotType type;
@@ -15,21 +15,13 @@ public class ParkingSlot {
 	public ParkingSlot() {
 		super();
 	}
-
-	public ParkingSlot(String number, boolean free, Vehicle vehicle, ParkingSlotType type) {
-		super();
+	
+	public ParkingSlot(int number) {
 		this.number = number;
-		this.free = free;
-		this.vehicle = vehicle;
-		this.type = type;
 	}
 
-	public String getNumber() {
+	public int getNumber() {
 		return number;
-	}
-
-	public void setNumber(String number) {
-		this.number = number;
 	}
 
 	public boolean isFree() {

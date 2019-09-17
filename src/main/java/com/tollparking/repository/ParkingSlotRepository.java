@@ -35,7 +35,8 @@ public class ParkingSlotRepository {
 			allAllotedSlotCount.put(parkinSlotType, 0);
 			Map<Integer, ParkingSlot> newSlotDetails = new HashMap<Integer, ParkingSlot>();
 			for (int i = 0; i < allParkingSlotConfig.get(parkinSlotType); i++) {
-				newSlotDetails.put(count++, new ParkingSlot());
+				newSlotDetails.put(count, new ParkingSlot(count));
+				count++;
 			}
 			allSlots.put(parkinSlotType, newSlotDetails);
 		}

@@ -108,24 +108,4 @@ public class ParkingLot {
 		}
 	}
 
-	public static void main(String[] args) throws ParkingFullException {
-
-		ParkingLot parkingLot = new ParkingLot.Builder().addSlots(ParkingSlotType.SLOT_20KV, 6)
-				.addSlots(ParkingSlotType.SLOT_50KV, 6)
-				.addBillingPolicy(new DefaultBillingPolicy.Builder().perHour(10).build()).build();
-
-		Ticket allotedTicket = parkingLot.assignParking("AB11AA3939", VehicleType.CAR_20KV);
-		allotedTicket.print();
-
-		allotedTicket = parkingLot.assignParking("AB11AA393900", VehicleType.CAR_20KV);
-		allotedTicket.setIssuedAt(new Date(119, 8, 14));
-
-		double freeParking = parkingLot.vehicleExit("TKT-1");
-		allotedTicket.print();
-
-		allotedTicket = parkingLot.assignParking("AB11AA3939999", VehicleType.CAR_50KV);
-
-		allotedTicket.print();
-	}
-
 }

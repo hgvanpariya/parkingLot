@@ -16,18 +16,6 @@ public class Ticket {
 		super();
 	}
 
-	public Ticket(String ticketNumber, Date issuedAt, Date payedAt, double payedAmount,
-			TicketStatus parkingTicketStatus, Integer parkingSlotNumber, Vehicle vehicle) {
-		super();
-		this.ticketNumber = ticketNumber;
-		this.issuedAt = issuedAt;
-		this.payedAt = payedAt;
-		this.payedAmount = payedAmount;
-		this.parkingTicketStatus = parkingTicketStatus;
-		this.parkingSlotNumber = parkingSlotNumber;
-		this.vehicle = vehicle;
-	}
-
 	public Integer getParkingSlotNumber() {
 		return parkingSlotNumber;
 	}
@@ -99,11 +87,5 @@ public class Ticket {
 
 	}
 
-	@Override
-	public String toString() {
-		return "ParkingTicket [ticketNumber=" + ticketNumber + ", issuedAt=" + issuedAt + ", payedAt=" + payedAt
-				+ ", payedAmount=" + payedAmount + ", parkingTicketStatus=" + parkingTicketStatus
-				+ ", parkingSlotNumber=" + parkingSlotNumber + ", vehicle=" + vehicle + "]";
-	}
 
 }

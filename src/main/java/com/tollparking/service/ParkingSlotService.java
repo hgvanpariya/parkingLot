@@ -37,13 +37,6 @@ public class ParkingSlotService {
 		return parkingSlotService;
 	}
 
-	public static ParkingSlotService getInstance() {
-		if (parkingSlotService != null) {
-			return parkingSlotService;
-		}
-		return null;
-	}
-
 	/**
 	 * This method will find the fee parking slot for the vehicle.
 	 * 
@@ -96,6 +89,7 @@ public class ParkingSlotService {
 				.get(ticket.getParkingSlotNumber());
 		parkingSlot.setFree(true);
 		parkingSlot.setVehicle(null);
+		parkingSlot.setType(parkingSlotType);
 
 		// Reduce slot count to one lesser
 		Integer allotedSLotCount = parkingSlotRepository.getAllAllotedSlotCount().get(parkingSlotType);
