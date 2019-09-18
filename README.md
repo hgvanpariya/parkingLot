@@ -1,4 +1,13 @@
 # Parking Lot
+## Setup
+
+### Download jar and use it in oroject
+Download the release jar from the release section of githug
+
+[Download v0.0.1](https://github.com/hgvanpariya/parkingLot/releases/download/0.0.1/com.tollparking-0.0.1.jar])
+
+Copy the jar to your project or provide it in class path.
+
 
 ## Usage
 
