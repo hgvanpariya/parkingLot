@@ -1,5 +1,6 @@
 package com.tollparking.service;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
@@ -24,7 +25,9 @@ public class ParkingSlotService {
 		parkingSlotRepository.initializeRepository(allParkingSlotConfig);
 		properties = new Properties();
 		try {
-			properties.load(ParkingSlotService.class.getResourceAsStream("VehicleTypeParkingSlotMapping.properties"));
+			String rootPath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
+			String appConfigPath = rootPath + "VehicleTypeParkingSlotMapping.properties";
+			properties.load(new FileInputStream(appConfigPath));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

@@ -35,23 +35,24 @@ public class ParkingSlotRepository {
 <span class="fc" id="L35">			allAllotedSlotCount.put(parkinSlotType, 0);</span>
 <span class="fc" id="L36">			Map&lt;Integer, ParkingSlot&gt; newSlotDetails = new HashMap&lt;Integer, ParkingSlot&gt;();</span>
 <span class="fc bfc" id="L37" title="All 2 branches covered.">			for (int i = 0; i &lt; allParkingSlotConfig.get(parkinSlotType); i++) {</span>
-<span class="fc" id="L38">				newSlotDetails.put(count++, new ParkingSlot());</span>
+<span class="fc" id="L38">				newSlotDetails.put(count, new ParkingSlot(count));</span>
+<span class="fc" id="L39">				count++;</span>
 			}
-<span class="fc" id="L40">			allSlots.put(parkinSlotType, newSlotDetails);</span>
-		}
+<span class="fc" id="L41">			allSlots.put(parkinSlotType, newSlotDetails);</span>
+<span class="fc" id="L42">		}</span>
 
-<span class="fc" id="L43">	}</span>
+<span class="fc" id="L44">	}</span>
 
 	public Map&lt;ParkingSlotType, Map&lt;Integer, ParkingSlot&gt;&gt; getAllSlots() {
-<span class="fc" id="L46">		return this.allSlots;</span>
+<span class="fc" id="L47">		return this.allSlots;</span>
 	}
 
 	public Map&lt;ParkingSlotType, Integer&gt; getAllAllotedSlotCount() {
-<span class="fc" id="L50">		return allAllotedSlotCount;</span>
+<span class="fc" id="L51">		return allAllotedSlotCount;</span>
 	}
 
 	public Map&lt;ParkingSlotType, Integer&gt; getTotalSlotConfig() {
-<span class="fc" id="L54">		return totalSlotConfig;</span>
+<span class="fc" id="L55">		return totalSlotConfig;</span>
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

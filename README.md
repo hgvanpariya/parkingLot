@@ -64,9 +64,15 @@ Vehicle type = CAR_20KV
 ===========================================
 ```
 
+## Coverage Report 
+
+[Coverage Report](https://hgvanpariya.github.io/parkingLot/target/site/jacoco/)
+
 ## Error Code
 * ERR01 : Parking is Full.
+* ERR002: Parking slot is not configured for given car type ( type_of_car ).
 * ERR04 : Invalid Ticket ID.
+
 
 ## Limitations:
 
