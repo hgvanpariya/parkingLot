@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TicketService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">com.tollparking</a> &gt; <a href="index.source.html" class="el_package">com.tollparking.service</a> &gt; <span class="el_source">TicketService.java</span></div><h1>TicketService.java</h1><pre class="source lang-java linenums">package com.tollparking.service;
+
+import java.util.Collection;
+import java.util.Date;
+
+import com.tollparking.domain.Ticket;
+import com.tollparking.domain.TicketStatus;
+import com.tollparking.domain.Vehicle;
+import com.tollparking.repository.TicketRepository;
+import com.tollparking.util.TicketIDGenerator;
+
+public class TicketService {
+
+	private static TicketService ticketService;
+
+	private TicketRepository ticketRepository;
+
+<span class="fc" id="L18">	private TicketService() {</span>
+<span class="fc" id="L19">		ticketRepository = new TicketRepository();</span>
+<span class="fc" id="L20">	}</span>
+
+	public static TicketService getInstance() {
+<span class="fc bfc" id="L23" title="All 2 branches covered.">		if (ticketService == null) {</span>
+<span class="fc" id="L24">			ticketService = new TicketService();</span>
+
+		}
+<span class="fc" id="L27">		return ticketService;</span>
+
+	}
+
+	public Ticket createTicket(Vehicle vehicle, Integer parkingSlotNumber) {
+<span class="fc" id="L32">		Ticket ticket = new Ticket();</span>
+<span class="fc" id="L33">		ticket.setIssuedAt(new Date());</span>
+
+<span class="fc" id="L35">		ticket.setVehicle(vehicle);</span>
+		// Update ticket with Parking slot number
+<span class="fc" id="L37">		ticket.setParkingSlotNumber(parkingSlotNumber);</span>
+<span class="fc" id="L38">		String ticketID = TicketIDGenerator.createID();</span>
+<span class="fc" id="L39">		ticket.setTicketNumber(ticketID);</span>
+<span class="fc" id="L40">		ticket.setParkingTicketStatus(TicketStatus.ACTIVE);</span>
+<span class="fc" id="L41">		ticketRepository.getActiveTickets().put(ticketID, ticket);</span>
+
+<span class="fc" id="L43">		return ticket;</span>
+
+	}
+
+	public boolean hasTicket(String ticketId) {
+<span class="fc bfc" id="L48" title="All 2 branches covered.">		if (ticketId == null) {</span>
+<span class="fc" id="L49">			throw new IllegalArgumentException(&quot;ERR04: Invalid Ticket ID.&quot;);</span>
+		}
+<span class="fc" id="L51">		return ticketRepository.getActiveTickets().containsKey(ticketId);</span>
+	}
+
+	public Ticket find(String ticketId) {
+<span class="fc bfc" id="L55" title="All 2 branches covered.">		if (ticketId == null) {</span>
+<span class="fc" id="L56">			throw new IllegalArgumentException(&quot;ERR04: Invalid Ticket ID.&quot;);</span>
+		}
+<span class="fc" id="L58">		return ticketRepository.getActiveTickets().get(ticketId);</span>
+	}
+
+	public Collection&lt;Ticket&gt; findAll() {
+<span class="fc" id="L62">		return ticketRepository.getActiveTickets().values();</span>
+
+	}
+
+	public Ticket delete(String ticketId) {
+<span class="fc bfc" id="L67" title="All 2 branches covered.">		if (ticketRepository.getActiveTickets().containsKey(ticketId)) {</span>
+<span class="fc" id="L68">			return ticketRepository.getActiveTickets().remove(ticketId);</span>
+		} else {
+<span class="fc" id="L70">			return null;</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

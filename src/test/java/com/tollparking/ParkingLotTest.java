@@ -18,7 +18,6 @@ import com.tollparking.domain.TicketStatus;
 import com.tollparking.domain.VehicleType;
 import com.tollparking.exception.InvalidParkingSlotTypeException;
 import com.tollparking.exception.ParkingFullException;
-import com.tollparking.service.ParkingSlotService;
 import com.tollparking.util.DefaultBillingPolicy;
 
 /**
@@ -35,7 +34,7 @@ public class ParkingLotTest {
 	@Before
 	public void setUp() throws Exception {
 		parkingLot = new ParkingLot.Builder()
-				.addSlots(ParkingSlotType.SLOT_50KV, 6).addSlots(ParkingSlotType.STANDARD_SLOT, 6)
+				.addSlots(ParkingSlotType.SLOT_50KV, 6).addSlots(ParkingSlotType.SLOT_20KV, 6)
 				.addBillingPolicy(new DefaultBillingPolicy.Builder().perHour(10).build()).build();
 
 	}
@@ -48,7 +47,7 @@ public class ParkingLotTest {
 	 */
 	@Test
 	public void testAssignParking() throws ParkingFullException {
-		Ticket allotedTicket = parkingLot.assignParking("AB11AA3939", VehicleType.SEDAN_CAR);
+		Ticket allotedTicket = parkingLot.assignParking("AB11AA3939", VehicleType.CAR_20KV);
 		allotedTicket.print();
 		assertNotNull(allotedTicket);
 		assertTrue(allotedTicket.getParkingTicketStatus() == TicketStatus.ACTIVE);
@@ -75,7 +74,7 @@ public class ParkingLotTest {
 	 */
 	@Test
 	public void testVehicleExit() throws ParkingFullException, InterruptedException {
-		Ticket allotedTicket = parkingLot.assignParking("AB11AA3939", VehicleType.SEDAN_CAR);
+		Ticket allotedTicket = parkingLot.assignParking("AB11AA3939", VehicleType.CAR_20KV);
 		allotedTicket.setIssuedAt(new Date(119, 8, 14));
 		double vehicleExit = parkingLot.vehicleExit(allotedTicket.getTicketNumber());
 		assertTrue(vehicleExit > 0);
@@ -103,13 +102,13 @@ public class ParkingLotTest {
 	@Test
 	public void testIsFullException() throws ParkingFullException {
 		try {
-			parkingLot.assignParking("AB11AA3939", VehicleType.CAR_50KV);
-			parkingLot.assignParking("AB11AA3939", VehicleType.CAR_50KV);
-			parkingLot.assignParking("AB11AA3939", VehicleType.CAR_50KV);
-			parkingLot.assignParking("AB11AA3939", VehicleType.CAR_50KV);
-			parkingLot.assignParking("AB11AA3939", VehicleType.CAR_50KV);
-			parkingLot.assignParking("AB11AA3939", VehicleType.CAR_50KV);
-			parkingLot.assignParking("AB11AA3939", VehicleType.CAR_50KV);
+			parkingLot.assignParking("AB11AA3939", VehicleType.CAR_20KV);
+			parkingLot.assignParking("AB11AA3939", VehicleType.CAR_20KV);
+			parkingLot.assignParking("AB11AA3939", VehicleType.CAR_20KV);
+			parkingLot.assignParking("AB11AA3939", VehicleType.CAR_20KV);
+			parkingLot.assignParking("AB11AA3939", VehicleType.CAR_20KV);
+			parkingLot.assignParking("AB11AA3939", VehicleType.CAR_20KV);
+			parkingLot.assignParking("AB11AA3939", VehicleType.CAR_20KV);
 		} catch (ParkingFullException pfe) {
 			assertTrue(true);
 		} finally {

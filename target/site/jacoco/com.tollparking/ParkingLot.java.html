@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ParkingLot.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">com.tollparking</a> &gt; <a href="index.source.html" class="el_package">com.tollparking</a> &gt; <span class="el_source">ParkingLot.java</span></div><h1>ParkingLot.java</h1><pre class="source lang-java linenums">package com.tollparking;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.tollparking.domain.ParkingSlotType;
+import com.tollparking.domain.Ticket;
+import com.tollparking.domain.TicketStatus;
+import com.tollparking.domain.Vehicle;
+import com.tollparking.domain.VehicleType;
+import com.tollparking.exception.ParkingFullException;
+import com.tollparking.service.ParkingSlotService;
+import com.tollparking.service.TicketService;
+import com.tollparking.util.BillingPolicy;
+import com.tollparking.util.DefaultBillingPolicy;
+
+/**
+ * This class is the main class for the ParkingLot, with this the parking can be
+ * configured.
+ * 
+ * @author hvanpariya
+ *
+ */
+public class ParkingLot {
+
+	private BillingPolicy billingPolicy;
+	private TicketService ticketService;
+	private ParkingSlotService parkingSlotService;
+
+<span class="fc" id="L31">	private ParkingLot(Builder parkingLotBuilder) {</span>
+<span class="fc" id="L32">		this.parkingSlotService = ParkingSlotService.getInstance(parkingLotBuilder.allParkingSlotConfig);</span>
+<span class="fc" id="L33">		this.ticketService = TicketService.getInstance();</span>
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">		if (parkingLotBuilder.billingPolicy == null) {</span>
+
+		} else {
+<span class="fc" id="L37">			this.billingPolicy = parkingLotBuilder.billingPolicy;</span>
+
+		}
+<span class="fc" id="L40">	}</span>
+
+	public synchronized Ticket assignParking(String licenseNumber, VehicleType vehicleType)
+			throws ParkingFullException {
+
+<span class="pc bpc" id="L45" title="1 of 4 branches missed.">		if (licenseNumber == null || vehicleType == null) {</span>
+<span class="fc" id="L46">			return null;</span>
+		}
+
+		// Check if Parking is full
+<span class="fc bfc" id="L50" title="All 2 branches covered.">		if (this.isFull(vehicleType)) {</span>
+<span class="fc" id="L51">			throw new ParkingFullException();</span>
+		}
+<span class="fc" id="L53">		Vehicle vehicle = new Vehicle(licenseNumber, vehicleType);</span>
+		// Get Parking slot number
+<span class="fc" id="L55">		Integer parkingSlotNumber = parkingSlotService.assignVehicleToSlot(vehicle);</span>
+<span class="fc" id="L56">		parkingSlotService.incrementSpotCount(vehicle.getType());</span>
+<span class="fc" id="L57">		return ticketService.createTicket(vehicle, parkingSlotNumber);</span>
+	}
+
+	public synchronized double vehicleExit(String ticketID) throws ParkingFullException {
+
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">		if (ticketID == null) {</span>
+<span class="nc" id="L63">			return -1;</span>
+		}
+<span class="fc bfc" id="L65" title="All 2 branches covered.">		if (!ticketService.hasTicket(ticketID)) {</span>
+<span class="fc" id="L66">			return -1;</span>
+		}
+<span class="fc" id="L68">		Ticket parkingTicket = ticketService.find(ticketID);</span>
+<span class="fc" id="L69">		parkingTicket.setPayedAt(new Date());</span>
+<span class="fc" id="L70">		parkingTicket.setParkingTicketStatus(TicketStatus.PAID);</span>
+
+<span class="fc" id="L72">		double calculateParkingFees = billingPolicy.calculateParkingFees(parkingTicket);</span>
+<span class="fc" id="L73">		parkingTicket.setPayedAmount(calculateParkingFees);</span>
+		// Remove ticket from active tickets
+<span class="fc" id="L75">		ticketService.delete(parkingTicket.getTicketNumber());</span>
+
+<span class="fc" id="L77">		parkingSlotService.freeParkingSlot(parkingTicket);</span>
+
+<span class="fc" id="L79">		return calculateParkingFees;</span>
+	}
+
+	public boolean isFull(VehicleType type) {
+<span class="fc" id="L83">		return parkingSlotService.isFull(type);</span>
+	}
+
+	public static class Builder {
+
+		BillingPolicy billingPolicy;
+<span class="fc" id="L89">		Map&lt;ParkingSlotType, Integer&gt; allParkingSlotConfig = new HashMap&lt;ParkingSlotType, Integer&gt;();</span>
+
+<span class="fc" id="L91">		public Builder() {</span>
+<span class="fc" id="L92">		}</span>
+
+		public Builder addSlots(ParkingSlotType parkingSlotType, int count) {
+<span class="fc" id="L95">			allParkingSlotConfig.put(parkingSlotType, count);</span>
+<span class="fc" id="L96">			return this;</span>
+		}
+
+		public Builder addBillingPolicy(BillingPolicy billingPolicy) {
+<span class="fc" id="L100">			this.billingPolicy = billingPolicy;</span>
+<span class="fc" id="L101">			return this;</span>
+		}
+
+		public ParkingLot build() {
+<span class="fc" id="L105">			ParkingLot parkingLot = new ParkingLot(this);</span>
+<span class="fc" id="L106">			return parkingLot;</span>
+
+		}
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

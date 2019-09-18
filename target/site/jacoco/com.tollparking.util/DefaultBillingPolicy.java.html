@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultBillingPolicy.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">com.tollparking</a> &gt; <a href="index.source.html" class="el_package">com.tollparking.util</a> &gt; <span class="el_source">DefaultBillingPolicy.java</span></div><h1>DefaultBillingPolicy.java</h1><pre class="source lang-java linenums">package com.tollparking.util;
+
+import org.joda.time.DateTime;
+import org.joda.time.Hours;
+
+import com.tollparking.domain.Ticket;
+
+public class DefaultBillingPolicy implements BillingPolicy {
+
+	private int fixedHour;
+	private double fixedHourRate;
+	private double perHourRate;
+
+<span class="nc" id="L14">	public DefaultBillingPolicy() {</span>
+<span class="nc" id="L15">	}</span>
+
+<span class="fc" id="L17">	public DefaultBillingPolicy(Builder defaultBillingPolicyBuilder) {</span>
+<span class="fc" id="L18">		this.fixedHour = defaultBillingPolicyBuilder.fixedHour;</span>
+<span class="fc" id="L19">		this.fixedHourRate = defaultBillingPolicyBuilder.fixedHourRate;</span>
+<span class="fc" id="L20">		this.perHourRate = defaultBillingPolicyBuilder.perHourRate;</span>
+<span class="fc" id="L21">	}</span>
+
+	public double calculateParkingFees(Ticket parkingTicket) {
+<span class="fc" id="L24">		DateTime issuedAt = new DateTime(parkingTicket.getIssuedAt());</span>
+<span class="fc" id="L25">		DateTime payedAt = new DateTime(parkingTicket.getPayedAt());</span>
+<span class="fc" id="L26">		int totalTimeSpent = Hours.hoursBetween(issuedAt, payedAt).getHours();</span>
+<span class="fc" id="L27">		double totalCharges = 0;</span>
+<span class="pc bpc" id="L28" title="1 of 2 branches missed.">		if (fixedHour != 0) {</span>
+<span class="nc" id="L29">			totalTimeSpent = totalTimeSpent - fixedHour;</span>
+<span class="nc" id="L30">			totalCharges += fixedHourRate;</span>
+		}
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">		if (totalTimeSpent &gt; 0) {</span>
+<span class="fc" id="L33">			totalCharges += (totalTimeSpent * perHourRate);</span>
+		}
+<span class="fc" id="L35">		return totalCharges;</span>
+	}
+
+<span class="fc" id="L38">	public static class Builder {</span>
+		private int fixedHour;
+		private double fixedHourRate;
+		private double perHourRate;
+
+		public Builder fixedHour(int fixedHour, double fixedHourRate) {
+<span class="nc" id="L44">			this.fixedHour = fixedHour;</span>
+<span class="nc" id="L45">			this.fixedHourRate = fixedHourRate;</span>
+<span class="nc" id="L46">			return this;</span>
+		}
+
+		public Builder perHour(double perHourRate) {
+<span class="fc" id="L50">			this.perHourRate = perHourRate;</span>
+<span class="fc" id="L51">			return this;</span>
+		}
+
+		public DefaultBillingPolicy build() {
+<span class="fc" id="L55">			DefaultBillingPolicy defaultBillingPolicy = new DefaultBillingPolicy(this);</span>
+<span class="fc" id="L56">			return defaultBillingPolicy;</span>
+		}
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

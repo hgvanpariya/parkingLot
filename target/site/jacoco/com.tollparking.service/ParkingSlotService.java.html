@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ParkingSlotService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">com.tollparking</a> &gt; <a href="index.source.html" class="el_package">com.tollparking.service</a> &gt; <span class="el_source">ParkingSlotService.java</span></div><h1>ParkingSlotService.java</h1><pre class="source lang-java linenums">package com.tollparking.service;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Properties;
+
+import com.tollparking.domain.ParkingSlot;
+import com.tollparking.domain.ParkingSlotType;
+import com.tollparking.domain.Ticket;
+import com.tollparking.domain.Vehicle;
+import com.tollparking.domain.VehicleType;
+import com.tollparking.exception.InvalidParkingSlotTypeException;
+import com.tollparking.exception.ParkingFullException;
+import com.tollparking.repository.ParkingSlotRepository;
+
+public class ParkingSlotService {
+
+	private static ParkingSlotService parkingSlotService;
+	private ParkingSlotRepository parkingSlotRepository;
+	private Properties properties;
+
+<span class="fc" id="L22">	private ParkingSlotService(Map&lt;ParkingSlotType, Integer&gt; allParkingSlotConfig) {</span>
+<span class="fc" id="L23">		parkingSlotRepository = new ParkingSlotRepository();</span>
+<span class="fc" id="L24">		parkingSlotRepository.initializeRepository(allParkingSlotConfig);</span>
+<span class="fc" id="L25">		properties = new Properties();</span>
+		try {
+<span class="fc" id="L27">			properties.load(ParkingSlotService.class.getResourceAsStream(&quot;VehicleTypeParkingSlotMapping.properties&quot;));</span>
+<span class="pc" id="L28">		} catch (IOException e) {</span>
+<span class="nc" id="L29">			e.printStackTrace();</span>
+		}
+<span class="fc" id="L31">	}</span>
+
+	public static ParkingSlotService getInstance(Map&lt;ParkingSlotType, Integer&gt; allParkingSlotConfig) {
+<span class="fc bfc" id="L34" title="All 2 branches covered.">		if (parkingSlotService == null) {</span>
+<span class="fc" id="L35">			parkingSlotService = new ParkingSlotService(allParkingSlotConfig);</span>
+		}
+<span class="fc" id="L37">		return parkingSlotService;</span>
+	}
+
+	public static ParkingSlotService getInstance() {
+<span class="pc bpc" id="L41" title="1 of 2 branches missed.">		if (parkingSlotService != null) {</span>
+<span class="fc" id="L42">			return parkingSlotService;</span>
+		}
+<span class="nc" id="L44">		return null;</span>
+	}
+
+	/**
+	 * This method will find the fee parking slot for the vehicle.
+	 * 
+	 * @param vehicle
+	 * @return
+	 * @throws ParkingFullException
+	 */
+	public Integer findFreeSlotForVehicle(Vehicle vehicle) throws ParkingFullException {
+<span class="fc" id="L55">		Map&lt;Integer, ParkingSlot&gt; map = parkingSlotRepository.getAllSlots().get(convert(vehicle.getType()));</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">		for (Integer eachSlotNumber : map.keySet()) {</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">			if (map.get(eachSlotNumber).isFree()) {</span>
+<span class="fc" id="L58">				return eachSlotNumber;</span>
+			}
+		}
+<span class="nc" id="L61">		throw new ParkingFullException();</span>
+	}
+
+	/**
+	 * This method will assign a vehicle to an empty slot.
+	 * 
+	 * @param vehicle
+	 * @return
+	 * @throws ParkingFullException
+	 */
+	public Integer assignVehicleToSlot(Vehicle vehicle) throws ParkingFullException {
+<span class="fc" id="L72">		Integer findFreeSlotForVehicle = findFreeSlotForVehicle(vehicle);</span>
+<span class="fc" id="L73">		Map&lt;Integer, ParkingSlot&gt; map = parkingSlotRepository.getAllSlots().get(convert(vehicle.getType()));</span>
+<span class="fc" id="L74">		ParkingSlot parkingSlot = map.get(findFreeSlotForVehicle);</span>
+<span class="fc" id="L75">		parkingSlot.setVehicle(vehicle);</span>
+<span class="fc" id="L76">		parkingSlot.setFree(false);</span>
+<span class="fc" id="L77">		return findFreeSlotForVehicle;</span>
+	}
+
+	public void incrementSpotCount(VehicleType type) {
+<span class="fc" id="L81">		Integer totalAllotedSlot = parkingSlotRepository.getAllAllotedSlotCount().get(convert(type)) + 1;</span>
+<span class="fc" id="L82">		parkingSlotRepository.getAllAllotedSlotCount().put(convert(type), totalAllotedSlot);</span>
+<span class="fc" id="L83">	}</span>
+
+	/**
+	 * This method will help to perform operations on ParkingSlot when vehicle is
+	 * leaving.
+	 * 
+	 * @param ticket
+	 */
+	public void freeParkingSlot(Ticket ticket) {
+<span class="fc" id="L92">		ParkingSlotType parkingSlotType = convert(ticket.getVehicle().getType());</span>
+
+		// Free Parking slot
+<span class="fc" id="L95">		ParkingSlot parkingSlot = parkingSlotRepository.getAllSlots().get(parkingSlotType)</span>
+<span class="fc" id="L96">				.get(ticket.getParkingSlotNumber());</span>
+<span class="fc" id="L97">		parkingSlot.setFree(true);</span>
+<span class="fc" id="L98">		parkingSlot.setVehicle(null);</span>
+
+		// Reduce slot count to one lesser
+<span class="fc" id="L101">		Integer allotedSLotCount = parkingSlotRepository.getAllAllotedSlotCount().get(parkingSlotType);</span>
+<span class="fc" id="L102">		parkingSlotRepository.getAllAllotedSlotCount().put(parkingSlotType, allotedSLotCount - 1);</span>
+<span class="fc" id="L103">	}</span>
+
+	/**
+	 * This method will check if the parking is full for the given type of vehicle.
+	 * 
+	 * @param type Type of the vehicle for which the parking has to be searched.
+	 * @return status of the parking slot, it will return true if parking slot is
+	 *         available else it will return false.
+	 */
+	public boolean isFull(VehicleType type) {
+<span class="fc" id="L113">		ParkingSlotType parkingSlotType = convert(type);</span>
+<span class="fc" id="L114">		Integer totalAllotedSlot = parkingSlotRepository.getAllAllotedSlotCount().get(parkingSlotType);</span>
+<span class="fc" id="L115">		Integer totalAvailableSlots = parkingSlotRepository.getTotalSlotConfig().get(parkingSlotType);</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">		if (totalAllotedSlot == null) {</span>
+<span class="fc" id="L117">			throw new InvalidParkingSlotTypeException(type);</span>
+		}
+<span class="fc bfc" id="L119" title="All 2 branches covered.">		return totalAllotedSlot &gt;= totalAvailableSlots;</span>
+	}
+
+	/**
+	 * This method is the converter from {@link VehicleType} to {@link ParkingSlotType}
+	 * @param vehicleType
+	 * @return
+	 */
+	public ParkingSlotType convert(VehicleType vehicleType) {
+<span class="fc" id="L128">		return ParkingSlotType.valueOf(properties.getProperty(vehicleType.toString()));</span>
+	}
+	
+	/**
+	 * This method will clean the parking. It will be mainly used for test.
+	 */
+	public void cleanSpecificParkingType(ParkingSlotType parkingSlotType) {
+<span class="fc" id="L135">		parkingSlotRepository.getAllAllotedSlotCount().put(parkingSlotType,0);</span>
+<span class="fc" id="L136">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>

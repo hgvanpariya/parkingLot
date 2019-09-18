@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ParkingSlotRepository.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">com.tollparking</a> &gt; <a href="index.source.html" class="el_package">com.tollparking.repository</a> &gt; <span class="el_source">ParkingSlotRepository.java</span></div><h1>ParkingSlotRepository.java</h1><pre class="source lang-java linenums">package com.tollparking.repository;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.tollparking.domain.ParkingSlot;
+import com.tollparking.domain.ParkingSlotType;
+
+/**
+ * This class will store and retrieve the data related to Parking slot.
+ * 
+ * @author hvanpariya
+ *
+ */
+public class ParkingSlotRepository {
+	Map&lt;ParkingSlotType, Map&lt;Integer, ParkingSlot&gt;&gt; allSlots;
+	Map&lt;ParkingSlotType, Integer&gt; totalSlotConfig;
+	Map&lt;ParkingSlotType, Integer&gt; allAllotedSlotCount;
+
+<span class="fc" id="L20">	public ParkingSlotRepository() {</span>
+<span class="fc" id="L21">		this.allSlots = new HashMap&lt;ParkingSlotType, Map&lt;Integer, ParkingSlot&gt;&gt;();</span>
+<span class="fc" id="L22">		this.totalSlotConfig = new HashMap&lt;ParkingSlotType, Integer&gt;();</span>
+<span class="fc" id="L23">		this.allAllotedSlotCount = new HashMap&lt;ParkingSlotType, Integer&gt;();</span>
+<span class="fc" id="L24">	}</span>
+
+	/**
+	 * This method will initialize the repository
+	 * 
+	 * @param allParkingSlotConfig
+	 */
+	public void initializeRepository(Map&lt;ParkingSlotType, Integer&gt; allParkingSlotConfig) {
+<span class="fc" id="L32">		int count = 0;</span>
+<span class="fc bfc" id="L33" title="All 2 branches covered.">		for (ParkingSlotType parkinSlotType : allParkingSlotConfig.keySet()) {</span>
+<span class="fc" id="L34">			totalSlotConfig.put(parkinSlotType, allParkingSlotConfig.get(parkinSlotType));</span>
+<span class="fc" id="L35">			allAllotedSlotCount.put(parkinSlotType, 0);</span>
+<span class="fc" id="L36">			Map&lt;Integer, ParkingSlot&gt; newSlotDetails = new HashMap&lt;Integer, ParkingSlot&gt;();</span>
+<span class="fc bfc" id="L37" title="All 2 branches covered.">			for (int i = 0; i &lt; allParkingSlotConfig.get(parkinSlotType); i++) {</span>
+<span class="fc" id="L38">				newSlotDetails.put(count++, new ParkingSlot());</span>
+			}
+<span class="fc" id="L40">			allSlots.put(parkinSlotType, newSlotDetails);</span>
+		}
+
+<span class="fc" id="L43">	}</span>
+
+	public Map&lt;ParkingSlotType, Map&lt;Integer, ParkingSlot&gt;&gt; getAllSlots() {
+<span class="fc" id="L46">		return this.allSlots;</span>
+	}
+
+	public Map&lt;ParkingSlotType, Integer&gt; getAllAllotedSlotCount() {
+<span class="fc" id="L50">		return allAllotedSlotCount;</span>
+	}
+
+	public Map&lt;ParkingSlotType, Integer&gt; getTotalSlotConfig() {
+<span class="fc" id="L54">		return totalSlotConfig;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.2.201808211720</span></div></body></html>
